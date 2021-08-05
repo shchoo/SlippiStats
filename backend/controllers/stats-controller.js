@@ -47,6 +47,9 @@ const statsController = (db) => {
             if (!data.$and) data.$and = [];
             characters = [];
             let err = false
+	    if (characters.length > 1) {
+		err = true;
+	    }
             req.query.characters.forEach((character) => {
                 let charIndex = characterList.indexOf(character.toLocaleLowerCase());
                 if (charIndex == -1) {
@@ -55,7 +58,7 @@ const statsController = (db) => {
                 characters.push(charIndex);
             });
             if (err) {
-                return res.status(400).send({ message: 'Invalid character.' });
+                return res.status(400).send({ message: 'Invalid character, ensure you only select one matchup.' });
             }
             data.$and.push({ $or: [{ p1Character: { $in: characters } }, { p2Character: { $in: characters } }] });
         }
